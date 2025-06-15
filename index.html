@@ -1,534 +1,69 @@
 <!DOCTYPE html>
 <html lang="he">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MAYO'S CF</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link href="https://db.onlinewebfonts.com/c/bfb78e1c08d2eb564b6e132b1f128740?family=RAG-Marom+1.0" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" href="mayocf-logo.jpg" type="image/jpeg">
-<style>
-    html, body {
-        margin: 0;
-        overflow: hidden;
-        font-family: 'RAG-Marom 1.0';
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        box-sizing: border-box;
-        height: 812px;
-        width: 375px;
+  <meta charset="UTF-8">
+  <title>MAYO'S CF</title>
+  <link rel="icon" href="mayocf-logo.jpg" type="image/jpeg">
+  <style>
+    * {
+      box-sizing: border-box;
     }
 
-    .popup-content h3 {
-        font-family: 'RAG-Marom 1.0', sans-serif;
-        font-size: 20px;
-        margin-top: 0;
-        color: #2c3e50;
+    body, html {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      direction: rtl;
+      overflow: hidden;
     }
 
-#map {
-    height: 100dvh;
-    width: 100vw;
-    position: fixed;
-    top: 0;
-    left: 0;
-    inset: 0;
-    z-index: 1;
-    margin: 0;
-    padding: 0;
-    
-}
-
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-#datetime {
-  direction: rtl;
-  color: white;
-  font-size: 20px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 600;
-  text-align: right;
-  padding: 0 10px;
-}
-
-@media screen and (max-width: 600px) {
-  #datetime {
-    font-size: 16px;
-    text-align: center;
-  }
-}
-    #topbar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 70px;
-        background: #446694;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 20px;
-        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
-        z-index: 1002;
+    #splash {
+      text-align: center;
+      color: white;
+      font-family: Arial, sans-serif;
+      opacity: 1;
+      transition: opacity 1s ease-in-out;
     }
 
-    #sidebar, #taskbar {
-        z-index: 1001;
-        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    #splash.fade-out {
+      opacity: 0;
     }
 
-    .topbar-section {
-        display: flex;
-        align-items: center;
+     img {
+      max-width: 550px;
+      animation: fadeIn 2s ease-in-out, float 4s ease-in-out infinite;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
     }
 
-    .topbar-text {
-        color: white;
-        font-size: 25px;
-        text-align: center;
-        margin-right: 80px;
-    }
-
-    .right-section {
-        display: flex;
-        align-items: center;
-        direction: rtl;
-    }
-
-    .search-bar {
-        width: 300px;
-        height: 35px;
-        border-radius: 25px;
-        border: none;
-        padding: 5px 10px;
-        font-size: 16px;
-        background-color: #2a405e;
-        text-align: right;
-        color: white;
-        font-family: 'RAG-Marom 1.0';
-    }
-
-    .icon {
-        width: 60px;
-        height: 60px;
-        margin: 0 10px;
-    }
-
-    .icon-bar {
-        width: 30px;
-        height: 30px;
-        margin: 0 10px;
-    }
-
-    #sidebar {
-        position: absolute;
-        right: 0px;
-        top: 70px;
-        width: 180px;
-        height: calc(100dvh - 70px);
-        background: #446694;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 10px;
-        color: white;
-    }
-
-    .sidebar-btn {
-        width: 170px;
-        height: 170px;
-        margin: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        transition: background 0.3s, transform 0.2s;
-    }
-
-    .topbar-btn {
-        width: 90px;
-        height: 90px;
-        margin: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
-    }
-
-    .topbar-btn i, .sidebar-btn i {
-        font-size: 24px;
-    }
-
-    .sidebar-btn span {
-        font-size: 25px;
-        margin-top: 5px;
-        color: white;
-    }
-
-    .sidebar-btn:hover {
-        background: #5d7aa3;
-        transform: scale(1.1);
-    }
-
-    #taskbar {
-        position: absolute;
-        left: 10px;
-        top: 70px;
-        width: 100px;
-        height: calc(100dvh - 70px);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 10px;
-    }
-
-    .task-btn span {
-        color: white;
-    }
-
-    .zoomIn, .zoomOut {
-        width: 45px;
-        height: 18px;
-        margin: -1px;
-        display: flex;
-        border-radius: 10px;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: bold;
-        border-color: white;
-        border-width: 20px;
-        background: black;
-        color: white;
-        border: 1px solid white;
-    }
-
-    .task-btn {
-        width: 150px;
-        height: 150px;
-        margin: 5px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        font-size: 25px;
-    }
-
-    .task-btn i {
-        font-size: 32px;
-    }
-
-    /* רוטציה */
-    @media (orientation: landscape) {
-        #rotate-message {
-            display: flex;
-        }
-    }
-
-    /* מובייל */
-    @media screen and (max-width: 600px) {
-        .topbar-text {
-            font-size: 16px;
-            margin-right: 20px;
-        }
-
-        .search-bar {
-            width: 160px;
-            font-size: 14px;
-            padding: 6px 10px;
-        }
-
-        .topbar-btn, .sidebar-btn, .task-btn {
-            width: 60px;
-            height: 60px;
-            margin: 4px;
-        }
-
-        .sidebar-btn {
-            margin:45px;
-            width:100px;
-            height:100px;
-        }
-
-        .task-btn{
-            margin:50px;
-        }
-
-        .topbar-btn i, .sidebar-btn i, .task-btn i {
-            font-size: 18px;
-        }
-
-        .sidebar-btn span, .task-btn span {
-            font-size: 22px;
-        }
-
-        #sidebar, #taskbar {
-            width: 100px;
-        }
-
-        #form-container {
-            width: 90%;
-            left: 50%;
-            top: 80px;
-            padding: 20px;
-            transform: translateX(-50%);
-            height: auto;
-        }
-
-        #form-container input,
-        #form-container textarea {
-            font-size: 14px;
-        }
-
-        #form-container button {
-            font-size: 16px;
-            padding: 12px;
-        }
-
-        .zoomIn, .zoomOut {
-            width: 36px;
-            height: 18px;
-            font-size: 16px;
-        }
-
-        #mapMode {
-            width: 80px;
-            font-size: 12px;
-        }
-    }
-
-    /* iPhone 12 Pro */
-    @media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-        .topbar-text {
-            font-size: 17px;
-            margin-right: 16px;
-        }
-
-        .search-bar {
-            width: 160px;
-            font-size: 14px;
-            padding: 6px 10px;
-        }
-
-        .topbar-btn, .sidebar-btn, .task-btn {
-            width: 60px;
-            height: 60px;
-        }
-
-        .topbar-btn i, .sidebar-btn i, .task-btn i {
-            font-size: 18px;
-        }
-
-        .sidebar-btn span, .task-btn span {
-            font-size: 11px;
-        }
-
-        #sidebar, #taskbar {
-            width: 70px;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
-        }
-
-        #form-container {
-            width: 90%;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 20px;
-            font-size: 14px;
-        }
-
-        #form-container input,
-        #form-container textarea {
-            font-size: 14px;
-        }
-
-        #form-container button {
-            font-size: 16px;
-            padding: 10px 16px;
-        }
-
-        .zoomIn, .zoomOut {
-            width: 36px;
-            height: 18px;
-            font-size: 16px;
-        }
-
-        #mapMode {
-            width: 80px;
-            font-size: 12px;
-        }
-    }
-</style>
+  </style>
 </head>
 <body>
-    <div id="map"></div>
-    <div id="topbar">
-        <div class="topbar-section right-section">
-            <div class="topbar-btn" onclick="alert('📧 אין הודעות חדשות בדואר')">
-                <i class="fa-solid fa-envelope"></i>
-                <span>דואר</span>
-            </div>
-            <div class="topbar-btn" id="locationStatusBtn">
-                <i class="fa-solid fa-location-arrow" id="locationIcon" style="color: black;"></i>
-                <span>מיקום</span>
-            </div>
-            <div class="topbar-btn" onclick="selectKana()">
-                <i class="fa-solid fa-user"></i>
-                <span>קנים</span>
-            </div>            
-        </div>
+  <div id="splash">
+    <img src="mayocf-logo.jpg" alt="הלוגו שלך">
+  </div>
 
-        <!-- Search bar with icon -->
-        <div style="position: relative;">
-            <i class="fa fa-search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: white;"></i>
-            <input type="text" class="search-bar" placeholder="חיפוש" style="padding-right: 30px;">
-        </div>
-
-        <div class="topbar-section">
-            <span class="topbar-text" id="datetime"></span>
-        </div>
-    </div>
-
-    <div id="sidebar">
-        <div class="sidebar-btn">
-            <i class="fa-solid fa-layer-group" ></i>
-            <span>שכבות</span>
-        </div>
-        <div class="sidebar-btn">
-            <i class="fa-solid fa-wrench"></i>
-            <span>הגדרות</span>
-        </div>
-        <div class="sidebar-btn">
-            <i class="fa-solid fa-bell"></i>
-            <span>התראות</span>
-        </div>
-        <div class="sidebar-btn">
-            <i class="fa-solid fa-database"></i>
-            <span>נתונים</span>
-        </div>
-    </div>
-
-    <div id="taskbar">
-        <div class="task-btn" onclick="activateMuvitz()">
-            <i class="fa-solid fa-crosshairs" style="color:yellow"></i>
-            <span>תור משימות</span>
-        </div>
-        <div class="task-btn" title="הוספת איתור" onclick="toggleAddLocation()">
-            <i class="fa-solid fa-compass"></i>
-            <span>הוספת איתור</span>
-        </div>
-        <div id="form-container" style="
-        display: none;
-        position: absolute;
-        top: 20px;
-        left: 650px;
-        transform: translateX(-50%);
-        background-color: #446694;
-        padding: 40px;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        color: white;
-        font-family: 'RAG-Marom 1.0', sans-serif;
-        width: 350px;
-        height: 350px;
-        box-sizing: border-box;
-    ">
-      <input type="text" id="title" placeholder="כותרת" style="
-          width: 100%;
-          padding: 12px;
-          margin-bottom: 15px;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-family: inherit;
-      "/>
-    
-      <input type="text" id="image" placeholder="קישור לתמונה" style="
-          width: 100%;
-          padding: 12px;
-          margin-bottom: 15px;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-family: inherit;
-      "/>
-    
-      <textarea id="description" placeholder="תיאור" style="
-          width: 100%;
-          padding: 12px;
-          height: 100px;
-          margin-bottom: 15px;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-family: inherit;
-          resize: vertical;
-      "></textarea>
-    
-      <button onclick="saveLocation()" style="
-          width: 100%;
-          padding: 14px;
-          background-color: #f5c518;
-          color: #333;
-          border: none;
-          border-radius: 8px;
-          font-size: 18px;
-          font-weight: bold;
-          cursor: pointer;
-          font-family: inherit;
-      ">שמור מיקום</button>
-    </div>
-    
-        <div class="task-btn" title="מרכוז" onclick="centerMap()"> 
-            <i class="fa-solid fa-bullseye"></i>
-            <span>מרכוז</span> 
-        </div>
-        <div style="display: flex; flex-direction: row; gap: 8px;">
-            <div class="zoomIn" title="זום +" onclick="map.zoomIn()">+</div>
-            <div class="zoomOut" title="זום -" onclick="map.zoomOut()">−</div>
-        </div>
-        
-        <div style="margin-top: 10px; display: flex; flex-direction: column; align-items: center;">
-            <label style="color: white; font-size: 20px; margin-top: 10px;">מצב מפה</label>
-            <select id="mapMode" style="width: 90px; margin-top: 5px; border-radius: 5px; padding: 2px; font-family: 'RAG-Marom 1.0'; background-color: black; color: white;">
-                <option value="osm">🗺️ מפת זכרונות</option>
-                <option value="satellite">🛰️ מבצע מוביץ</option>
-            </select>            
-        </div>        
-    </div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="script.js"></script>
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    function updateDateTime() {
-      const now = new Date();
-      const date = now.toLocaleDateString('he-IL', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-      });
-      const time = now.toLocaleTimeString('he-IL', {
-        hour: '2-digit', minute: '2-digit', hour12: false
-      });
-      document.getElementById('datetime').textContent = `${date} ${time}`;
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 60000);
+    setTimeout(() => {
+      // מפעיל fade-out
+      document.getElementById("splash").classList.add("fade-out");
 
+      // מחכה עוד שנייה ואז עובר לעמוד הראשי
+      setTimeout(() => {
+        window.location.href = "index.html"; // שנה לכתובת של הדף הראשי שלך
+      }, 1000);
+    }, 4000); // 4 שניות תצוגה + 1 שנייה fade-out = 5 שניות סך הכול
   </script>
-
 </body>
 </html>
