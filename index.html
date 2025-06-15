@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>מפה אינטראקטיבית</title>
+    <title>MAYO'S CF</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link href="https://db.onlinewebfonts.com/c/bfb78e1c08d2eb564b6e132b1f128740?family=RAG-Marom+1.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="mayocf-logo.jpg" type="image/jpeg">
 <style>
     html, body {
         margin: 0;
@@ -14,7 +15,8 @@
         font-family: 'RAG-Marom 1.0';
         padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         box-sizing: border-box;
-        height: 100%;
+        height: 812px;
+        width: 375px;
     }
 
     .popup-content h3 {
@@ -22,20 +24,6 @@
         font-size: 20px;
         margin-top: 0;
         color: #2c3e50;
-    }
-
-    #rotate-message {
-        position: fixed;
-        width: 100%;
-        height: 100dvh;
-        background: black;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        font-size: 24px;
-        z-index: 1000;
     }
 
 #map {
@@ -48,7 +36,10 @@
     z-index: 1;
     margin: 0;
     padding: 0;
+    
 }
+
+
 * {
     margin: 0;
     padding: 0;
@@ -56,21 +47,23 @@
 }
 
 #datetime {
-    direction: rtl;
-    color: white;
-    font-size: 20px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: bold;
-}
-@media screen and (max-width: 600px) {
-    #datetime {
-        font-size: 10px;
-        margin-left: 20px;
-    }
+  direction: rtl;
+  color: white;
+  font-size: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  text-align: right;
+  padding: 0 10px;
 }
 
+@media screen and (max-width: 600px) {
+  #datetime {
+    font-size: 16px;
+    text-align: center;
+  }
+}
     #topbar {
         position: absolute;
         top: 0;
@@ -138,7 +131,7 @@
         position: absolute;
         right: 0px;
         top: 70px;
-        width: 100px;
+        width: 180px;
         height: calc(100dvh - 70px);
         background: #446694;
         display: flex;
@@ -149,8 +142,8 @@
     }
 
     .sidebar-btn {
-        width: 90px;
-        height: 90px;
+        width: 170px;
+        height: 170px;
         margin: 8px;
         display: flex;
         flex-direction: column;
@@ -178,7 +171,7 @@
     }
 
     .sidebar-btn span {
-        font-size: 12px;
+        font-size: 25px;
         margin-top: 5px;
         color: white;
     }
@@ -224,15 +217,15 @@
     }
 
     .task-btn {
-        width: 100px;
-        height: 100px;
+        width: 150px;
+        height: 150px;
         margin: 5px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 25px;
     }
 
     .task-btn i {
@@ -241,14 +234,8 @@
 
     /* רוטציה */
     @media (orientation: landscape) {
-        #rotate-message { display: none; }
-    }
-
-    @media (orientation: portrait) {
         #rotate-message {
             display: flex;
-            font-size: 20px;
-            padding: 10px;
         }
     }
 
@@ -271,16 +258,26 @@
             margin: 4px;
         }
 
+        .sidebar-btn {
+            margin:45px;
+            width:100px;
+            height:100px;
+        }
+
+        .task-btn{
+            margin:50px;
+        }
+
         .topbar-btn i, .sidebar-btn i, .task-btn i {
             font-size: 18px;
         }
 
         .sidebar-btn span, .task-btn span {
-            font-size: 10px;
+            font-size: 22px;
         }
 
         #sidebar, #taskbar {
-            width: 70px;
+            width: 100px;
         }
 
         #form-container {
@@ -315,7 +312,7 @@
     }
 
     /* iPhone 12 Pro */
-    @media screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+    @media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
         .topbar-text {
             font-size: 17px;
             margin-right: 16px;
@@ -379,7 +376,6 @@
 </style>
 </head>
 <body>
-    <div id="rotate-message">אנא סובבו את הטלפון שלכם לרוחב כדי להמשיך</div>
     <div id="map"></div>
     <div id="topbar">
         <div class="topbar-section right-section">
@@ -391,9 +387,9 @@
                 <i class="fa-solid fa-location-arrow" id="locationIcon" style="color: black;"></i>
                 <span>מיקום</span>
             </div>
-            <div class="topbar-btn" onclick="alert('👤 מסך הרשמה יגיע בקרוב!')">
-                <i class="fa-solid fa-user-plus"></i>
-                <span>הרשמה</span>
+            <div class="topbar-btn" onclick="selectKana()">
+                <i class="fa-solid fa-user"></i>
+                <span>קנים</span>
             </div>            
         </div>
 
@@ -428,7 +424,7 @@
     </div>
 
     <div id="taskbar">
-        <div class="task-btn" title="מצפן" onclick="alert('מצפן אינו נתמך בדפדפן זה')">
+        <div class="task-btn" onclick="activateMuvitz()">
             <i class="fa-solid fa-crosshairs" style="color:yellow"></i>
             <span>תור משימות</span>
         </div>
@@ -517,5 +513,22 @@
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const date = now.toLocaleDateString('he-IL', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const time = now.toLocaleTimeString('he-IL', {
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+      document.getElementById('datetime').textContent = `${date} ${time}`;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
+  </script>
+
 </body>
 </html>
